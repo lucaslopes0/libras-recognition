@@ -8,7 +8,6 @@ dist/
 data/raw/
 data/interim/
 data/processed/
-artifacts/
 .ipynb_checkpoints/
 .vscode/
 .idea/
