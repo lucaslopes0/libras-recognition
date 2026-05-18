@@ -1,4 +1,4 @@
-# 🤟 Libras Recognition — V-LIBRASIL
+# 🤟 Libras Recognition
 
 Sistema de reconhecimento de palavras em Libras em tempo real com
 **MediaPipe Holistic + LSTM Bidirecional + TensorFlow** e feedback
