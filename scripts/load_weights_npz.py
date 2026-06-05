@@ -1,11 +1,3 @@
-"""
-Carrega o modelo via pesos NumPy salvos em .npz.
-Formato totalmente independente de versões do NumPy/Keras/TF.
-
-Uso:
-    python scripts/load_weights_npz.py
-"""
-
 from __future__ import annotations
 
 import sys

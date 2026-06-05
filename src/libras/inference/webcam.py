@@ -70,7 +70,7 @@ def run_webcam(
 
             # MediaPipe
             image, results = detect(frame, holistic)
-            draw_landmarks(image, results)
+            #draw_landmarks(image, results)
 
             # Push keypoints no buffer
             predictor.push(extract_keypoints(results))

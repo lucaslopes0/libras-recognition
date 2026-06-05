@@ -1,6 +1,6 @@
 dataset:
   kaggle_id: "davimedio01/v-librasil"
-  max_classes: 50          # ← MUDOU (era null)
+  max_classes: 50          
 
 preprocess:
   num_frames: 30

@@ -1,20 +1,14 @@
-"""
-Passo 5 — Inferência em tempo real com webcam.
-
-⚠️  Execução local apenas — não funciona em Colab/Kaggle.
-
-Uso:
-    python scripts/05_run_webcam.py
-    python scripts/05_run_webcam.py --no-feedback
-    python scripts/05_run_webcam.py --camera 1
-"""
-
 from __future__ import annotations
 
 import argparse
+import sys
+
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from libras.config import load_config
 from libras.inference.webcam import run_webcam
+
 
 
 def main() -> None:
