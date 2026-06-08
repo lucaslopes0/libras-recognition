@@ -103,7 +103,13 @@ $card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   font-size: 3rem;
   font-weight: 700;
   color: $accent-color;
-  margin: 8px 0 0;
+  margin: 8px 0 16px;
+}
+
+.skip-button {
+  margin-top: 4px;
+  color: $accent-color;
+  border-color: $accent-color;
 }
 
 .feedback-card .feedback-content,

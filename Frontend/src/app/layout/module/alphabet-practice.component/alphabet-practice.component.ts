@@ -94,16 +94,11 @@ export class AlphabetPracticeComponent implements OnInit, OnDestroy {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageDataUrl = canvas.toDataURL('image/jpeg');
     this.isLoading = true;
-this.librasService.predict(imageDataUrl).subscribe({
+    this.librasService.predictLetter(imageDataUrl, this.targetLetter).subscribe({
       next: (response: any) => {
-        this.predictionResult = {
-          predicted_letter: response.predictions?.[0]?.word || '?',
-          confidence: response.predictions?.[0]?.confidence || 0,
-          correct: response.predictions?.[0]?.word === this.targetLetter,
-          message: response.ready ? `Predição: ${response.predictions?.[0]?.word}` : 'Processando...'
-        };
+        this.predictionResult = response;
         this.isLoading = false;
-        if (this.predictionResult.correct) {
+        if (response.correct) {
           setTimeout(() => this.selectRandomLetter(), 2000);
         }
       },
@@ -112,6 +107,6 @@ this.librasService.predict(imageDataUrl).subscribe({
         this.isLoading = false;
         console.error(error);
       }
-    })
+    });
   }
 }

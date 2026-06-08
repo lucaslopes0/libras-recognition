@@ -17,6 +17,10 @@
       <mat-card-content class="title-content">
         <p class="instruction-text">Faça o sinal para a letra</p>
         <h1 class="target-letter">{{ targetLetter }}</h1>
+        <button mat-stroked-button (click)="selectRandomLetter()" class="skip-button">
+          <mat-icon>skip_next</mat-icon>
+          Pular letra
+        </button>
       </mat-card-content>
     </mat-card>
 

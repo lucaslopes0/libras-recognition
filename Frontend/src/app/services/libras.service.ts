@@ -46,8 +46,12 @@ export class LibrasService {
   }
 
   predictLetter(imageData: string, targetLetter: string): Observable<any> {
-    return this.predict(imageData);
-  }
+    const data = {
+      image: imageData,
+      target_letter: targetLetter
+    };
+    return this.http.post(`${this.apiUrl}/predict_letter`, data);
+  } 
 
   recordData(imageData: string, label: string): Observable<any> {
     const data = { image: imageData, label: label };
