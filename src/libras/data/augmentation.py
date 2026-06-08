@@ -46,18 +46,17 @@ def spatial_jitter(seq: np.ndarray, max_shift: float = 0.02) -> np.ndarray:
     Aplica deslocamento espacial pequeno em todos os keypoints.
     Simula o usuário ligeiramente fora do centro do quadro.
     """
-    seq = seq.copy()
-    # Os keypoints estão normalizados em [0, 1], shifts pequenos não distorcem
     shift_x = np.random.uniform(-max_shift, max_shift)
     shift_y = np.random.uniform(-max_shift, max_shift)
 
-    # Pose: x, y, z, visibility (a cada 4 valores)
-    # Face/Hands: x, y, z (a cada 3 valores)
-    # Por simplicidade, aplicamos shift em todos os valores ímpares de x/y
-    # Como é um shift pequeno e os keypoints estão normalizados, OK
-    seq = seq + np.array([shift_x, shift_y, 0] * (seq.shape[1] // 3) +
-                         [0] * (seq.shape[1] % 3))[:seq.shape[1]]
-    return seq.astype(np.float32)
+    # Estrutura: pose (33×4: x,y,z,vis) + face (468×3) + mão esq/dir (21×3 cada)
+    # Apenas x e y são deslocados; z e visibility ficam intactos.
+    pose_shift = np.tile([shift_x, shift_y, 0.0, 0.0], 33)
+    face_shift = np.tile([shift_x, shift_y, 0.0], 468)
+    hand_shift = np.tile([shift_x, shift_y, 0.0], 21)
+    shift_vec = np.concatenate([pose_shift, face_shift, hand_shift, hand_shift])
+
+    return (seq + shift_vec).astype(np.float32)
 
 
 def scale_keypoints(seq: np.ndarray, max_scale: float = 0.1) -> np.ndarray:

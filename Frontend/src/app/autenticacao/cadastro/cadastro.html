@@ -1,0 +1,52 @@
+<div class="register-wrapper">
+  <!-- Coluna da Esquerda: Mensagem de Boas-vindas -->
+  <div class="branding-section">
+    <div class="branding-content">
+      <mat-icon class="brand-icon">sign_language</mat-icon>
+      <h1>Junte-se à Comunidade</h1>
+      <p>Crie sua conta e comece sua jornada de aprendizado na Língua Brasileira de Sinais. Conecte-se, aprenda e comunique-se.</p>
+    </div>
+  </div>
+
+  <!-- Coluna da Direita: Formulário de Cadastro -->
+  <div class="form-section">
+    <div class="form-container">
+      <h2>Crie sua Conta</h2>
+      <p class="subtitle">É rápido e fácil. Vamos começar!</p>
+
+      <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
+       
+        <mat-form-field appearance="outline">
+          <mat-label>Seu nome de usuário</mat-label>
+          <input matInput formControlName="username" required>
+          <mat-error *ngIf="cadastroForm.get('username')?.hasError('required')">
+            O nome de usuário é obrigatório.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Crie uma senha</mat-label>
+          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" required>
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button" aria-label="Mostrar/Esconder senha">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+           <mat-error *ngIf="cadastroForm.get('password')?.hasError('required')">
+            A senha é obrigatória.
+          </mat-error>
+           <mat-error *ngIf="cadastroForm.get('password')?.hasError('minlength')">
+            A senha precisa ter no mínimo 6 caracteres.
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="cadastroForm.invalid">
+          CRIAR MINHA CONTA
+        </button>
+      </form>
+
+      <div class="actions">
+        <span>Já tem uma conta?</span>
+        <a routerLink="/login">Entre aqui</a>
+      </div>
+    </div>
+  </div>
+</div>

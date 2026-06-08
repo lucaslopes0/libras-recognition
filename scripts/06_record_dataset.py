@@ -22,7 +22,12 @@ import numpy as np
 
 # ─── Vocabulário ───
 VOCABULARY = [
-    "Oi", "Obrigado", "Por favor", "Sim", "Bom Dia"
+    "Casa",
+    "Desculpa",
+    "Trabalho",
+    "De nada",
+    "Amigo",
+    "Família",
 ]
 
 REPS_PER_WORD = 10  # repetições por sessão
@@ -83,8 +88,9 @@ def record_clip(cap, duration_sec, output_path, fps=30):
         if not ret:
             break
 
+        original = frame.copy()
         frame = cv2.flip(frame, 1)
-        writer.write(cv2.flip(frame, 1))  # salva sem espelhar
+        writer.write(original)  # salva sem espelhar
 
         # HUD de gravação
         elapsed = time.time() - start
@@ -166,6 +172,7 @@ def main():
             filepath = word_dir / filename
 
             # Tela de instrução
+            key = None
             waiting = True
             while waiting:
                 ret, frame = cap.read()

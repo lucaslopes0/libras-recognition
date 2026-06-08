@@ -1,0 +1,108 @@
+:host {
+  font-family: 'Poppins', sans-serif;
+  --primary-color: #3f51b5;
+}
+
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #f4f5f7;
+}
+
+/* Coluna da Esquerda (Branding) */
+.branding-section {
+  flex: 1;
+  background: linear-gradient(rgba(63, 81, 181, 0.85), rgba(48, 63, 159, 0.95)), url('https://images.unsplash.com/photo-1588276552401-72c843d4c424?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8c2lnbiBsYW5ndWFnZSxoYW5kc3x8fHx8fDE3MjQ0NDQ5OTk&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.branding-content {
+  text-align: center;
+  .brand-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    margin-right: 20px;
+  }
+  h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    max-width: 400px;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+}
+
+/* Coluna da Direita (Formulário) */
+.form-section {
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.form-container {
+  max-width: 400px;
+  width: 100%;
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: #757575;
+    margin-bottom: 32px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+button[mat-raised-button] {
+  padding: 14px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 16px;
+  border-radius: 8px;
+}
+
+.actions {
+  text-align: center;
+  margin-top: 32px;
+  color: #757575;
+  a {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-left: 8px;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* --- Responsividade --- */
+@media (max-width: 900px) {
+  .branding-section {
+    display: none;
+  }
+}

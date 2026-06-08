@@ -18,14 +18,16 @@ import yaml
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 PATHS = {
-    "configs":        PROJECT_ROOT / "configs",
-    "data_raw":       PROJECT_ROOT / "data" / "raw",
-    "data_interim":   PROJECT_ROOT / "data" / "interim",
-    "data_processed": PROJECT_ROOT / "data" / "processed",
-    "artifacts":      PROJECT_ROOT / "artifacts",
-    "models":         PROJECT_ROOT / "artifacts" / "models",
-    "logs":           PROJECT_ROOT / "artifacts" / "logs",
-    "reports":        PROJECT_ROOT / "artifacts" / "reports",
+    "configs":               PROJECT_ROOT / "configs",
+    "data_raw":              PROJECT_ROOT / "data" / "raw",
+    "data_interim":          PROJECT_ROOT / "data" / "interim",
+    "data_processed":        PROJECT_ROOT / "data" / "processed",
+    "data_raw_custom":       PROJECT_ROOT / "data" / "raw_custom",
+    "data_processed_custom": PROJECT_ROOT / "data" / "processed_custom",
+    "artifacts":             PROJECT_ROOT / "artifacts",
+    "models":                PROJECT_ROOT / "artifacts" / "models",
+    "logs":                  PROJECT_ROOT / "artifacts" / "logs",
+    "reports":               PROJECT_ROOT / "artifacts" / "reports",
 }
 
 

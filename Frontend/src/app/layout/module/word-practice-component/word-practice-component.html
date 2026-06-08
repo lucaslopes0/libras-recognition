@@ -1,0 +1,99 @@
+<p>word-practice-component works!</p>
+<div class="main-container">
+  <!-- Webcam -->
+  <mat-card class="app-card webcam-card">
+    <div class="webcam-frame">
+      <video #videoElement class="webcam-video" autoplay muted></video>
+      <canvas #canvasElement style="display: none;"></canvas>
+
+      <!-- Barra de progresso do buffer sobre o vídeo -->
+      <div class="buffer-bar">
+        <mat-progress-bar
+          mode="determinate"
+          [value]="bufferProgress"
+          [color]="isReady ? 'primary' : 'accent'">
+        </mat-progress-bar>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Painel lateral -->
+  <div class="info-column">
+    <!-- Palavra alvo -->
+    <mat-card class="app-card title-card">
+      <div class="card-header">
+        <div class="icon-circle">
+          <mat-icon class="card-icon">sign_language</mat-icon>
+        </div>
+        <h2 class="card-title">Prática de Palavras</h2>
+      </div>
+      <mat-card-content class="title-content">
+        <p class="instruction-text">Faça o sinal para</p>
+        <h1 class="target-word" [class.correct]="isCorrect">{{ targetWord }}</h1>
+        <p class="score-text">Pontuação: {{ score }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top-3 Predições -->
+    <mat-card class="app-card predictions-card">
+      <mat-card-content>
+        <div class="predictions-header">
+          <mat-icon color="primary">insights</mat-icon>
+          <span>Predições</span>
+        </div>
+
+        <div *ngIf="predictions; else waiting">
+          <div *ngFor="let pred of predictions"
+               class="prediction-item"
+               [class.highlight]="pred.word === targetWord">
+            <div class="prediction-rank">#{{ pred.rank }}</div>
+            <div class="prediction-word">{{ pred.word }}</div>
+            <div class="prediction-bar">
+              <div class="prediction-fill"
+                   [style.width.%]="pred.confidence * 100"
+                   [style.background-color]="getConfidenceColor(pred.confidence)">
+              </div>
+            </div>
+            <div class="prediction-percent">{{ getConfidencePercent(pred.confidence) }}%</div>
+          </div>
+        </div>
+
+        <ng-template #waiting>
+          <div class="waiting-message">
+            <mat-progress-spinner diameter="24" mode="indeterminate" *ngIf="bufferProgress > 0 && bufferProgress < 100">
+            </mat-progress-spinner>
+            <p>Aguardando seu gesto...</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Feedback -->
+    <mat-card class="app-card feedback-card">
+      <mat-card-content class="feedback-content">
+        <div class="info-item">
+          <mat-icon class="info-icon" [color]="isCorrect ? 'primary' : 'accent'">
+            {{ isCorrect ? 'check_circle' : 'forum' }}
+          </mat-icon>
+          <p class="feedback-text">{{ feedbackMessage }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Histórico -->
+    <mat-card class="app-card history-card" *ngIf="history.length > 0">
+      <mat-card-content>
+        <div class="history-header">
+          <mat-icon>history</mat-icon>
+          <span>Histórico</span>
+          <button mat-icon-button (click)="clearHistory()" class="clear-btn">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+        <div class="history-words">
+          <span *ngFor="let word of history" class="history-chip">{{ word }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -13,8 +13,8 @@ preprocess:
 training:
   batch_size: 16
   epochs: 200
-  test_size: 0.34
-  val_size: 0.34
+  test_size: 0.15
+  val_size: 0.15
   random_seed: 42
   learning_rate: 0.001
   augmentation:
@@ -30,6 +30,8 @@ inference:
   threshold: 0.70
   stability_window: 10
   top_n_display: 5
+  predict_interval: 5
+  activity_threshold: 0.01
 
 feedback:
   error_threshold: 0.05

@@ -1,17 +1,23 @@
 {
   "classes": [
+    "Amigo",
     "Bom dia",
+    "Casa",
+    "De nada",
+    "Desculpa",
+    "Família",
     "Obrigado",
     "Oi",
     "Por favor",
-    "Sim"
+    "Sim",
+    "Trabalho"
   ],
-  "num_classes": 5,
+  "num_classes": 11,
   "num_frames": 30,
   "keypoint_dim": 1662,
   "threshold": 0.7,
-  "test_accuracy": 0.55,
-  "test_top3": 0.8999999761581421,
-  "epochs_trained": 121,
-  "best_val_acc": 0.75
+  "test_accuracy": 0.8382352941176471,
+  "test_top3": 0.970588207244873,
+  "epochs_trained": 131,
+  "best_val_acc": 0.8529411554336548
 }

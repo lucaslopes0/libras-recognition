@@ -13,11 +13,11 @@ from libras.config import Config
 from libras.inference.feedback import FeedbackEngine
 from libras.inference.hud import (
     draw_buffer_bar, draw_controls, draw_feedback,
-    draw_history, draw_top_predictions,
+    draw_history, draw_top_predictions, draw_waiting,
 )
 from libras.inference.predictor import StreamPredictor
 from libras.utils.mediapipe_holistic import (
-    create_holistic, detect, draw_landmarks, extract_keypoints,
+    create_holistic, detect, extract_keypoints,
 )
 
 
@@ -28,7 +28,10 @@ def run_webcam(
 ) -> None:
     """Loop principal — encerra com Q, limpa histórico com C."""
     # Inicializa componentes
-    predictor = StreamPredictor()
+    predictor = StreamPredictor(
+        predict_interval=config.inference.get("predict_interval", 5),
+        activity_threshold=config.inference.get("activity_threshold", 0.01),
+    )
     feedback_engine = (
         FeedbackEngine(
             classes=predictor.classes,
@@ -38,7 +41,7 @@ def run_webcam(
     )
 
     stability_window = config.inference["stability_window"]
-    threshold = 0.30   # ← MAIS BAIXO para mostrar mais predições
+    threshold = config.inference["threshold"]
     mp_config = config.preprocess["mediapipe"]
 
     # Estado
@@ -70,7 +73,6 @@ def run_webcam(
 
             # MediaPipe
             image, results = detect(frame, holistic)
-            #draw_landmarks(image, results)
 
             # Push keypoints no buffer
             predictor.push(extract_keypoints(results))
@@ -108,6 +110,8 @@ def run_webcam(
             sentence = sentence[-5:]
 
             # HUD
+            if predictor.is_ready and not predictor.is_active:
+                draw_waiting(image)
             draw_history(image, sentence)
             if feedback_engine and feedback_msgs:
                 draw_feedback(image, feedback_msgs, exec_score)
