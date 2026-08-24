@@ -5,13 +5,29 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-data/raw/
-data/interim/
-data/processed/
-data/raw_custom/
 .ipynb_checkpoints/
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.h5
+
+# Dados — nunca versionar binários de dataset (ver docs/ARCHITECTURE.md)
+data/raw/
+data/interim/
+data/processed/
+data/raw_custom/
+data/processed_custom/
+data/processed_10classes/
+data/*.tar.gz
+
+# Artefatos de treino — regeneráveis via scripts/03_train.py e 04_evaluate.py
+artifacts/logs/
+artifacts/models/olds/
+artifacts/models/weights_raw*.npz
+
+# Backend / instância local
+instance/
+backend/instance/
+backend/data/
+*.db
