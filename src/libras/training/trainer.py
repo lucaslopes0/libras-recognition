@@ -101,11 +101,11 @@ def train(config: Config, model_name: str = "bi_lstm") -> None:
     )
     split.summary()
 
-    # Salva conjunto de teste para evaluate.py
+    # Salva conjunto de teste para evaluate.py (formato consumido por
+    # libras.training.evaluator.evaluate: um único .npz com X_test/y_test)
     models_dir = PATHS["models"]
     models_dir.mkdir(parents=True, exist_ok=True)
-    np.save(models_dir / "X_test.npy", split.X_test)
-    np.save(models_dir / "y_test.npy", split.y_test)
+    np.savez(models_dir / "test_data.npz", X_test=split.X_test, y_test=split.y_test)
 
     # 3. Data augmentation (apenas no treino!)
     augmentation_cfg = cfg_train.get("augmentation", {})
