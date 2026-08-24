@@ -24,10 +24,13 @@ PATHS = {
     "data_processed":        PROJECT_ROOT / "data" / "processed",
     "data_raw_custom":       PROJECT_ROOT / "data" / "raw_custom",
     "data_processed_custom": PROJECT_ROOT / "data" / "processed_custom",
+    "data_letters_captured": PROJECT_ROOT / "data" / "raw_custom" / "letters",
     "artifacts":             PROJECT_ROOT / "artifacts",
     "models":                PROJECT_ROOT / "artifacts" / "models",
+    "models_letters":        PROJECT_ROOT / "artifacts" / "models" / "letters",
     "logs":                  PROJECT_ROOT / "artifacts" / "logs",
     "reports":               PROJECT_ROOT / "artifacts" / "reports",
+    "instance":              PROJECT_ROOT / "instance",
 }
 
 
