@@ -55,7 +55,7 @@ Este documento explica as decisões de design e como os módulos se conectam.
 
 Funções puras sem estado. Reutilizáveis em todos os outros módulos.
 
-- **`mediapipe_holistic.py`** — wrapper sobre MediaPipe. Centraliza extração de keypoints (1662 dims), normalização temporal, parsing de nomes do V-LIBRASIL.
+- **`mediapipe_holistic.py`** — wrapper sobre MediaPipe. Centraliza extração de keypoints (pose + subconjunto de face não-manual + mãos, ver `TOTAL_DIM`), normalização espacial (centraliza no meio-ombro, escala pela largura dos ombros) e temporal, parsing de nomes do V-LIBRASIL.
 - **`io.py`** — JSON load/save.
 
 ### 🟩 Data — `libras/data/`

@@ -4,7 +4,7 @@ dataset:
 
 preprocess:
   num_frames: 30
-  keypoint_dim: 1662
+  keypoint_dim: 438  # libras.utils.mediapipe_holistic.TOTAL_DIM (pose + face reduzida + maos)
   mediapipe:
     detection_confidence: 0.5
     tracking_confidence: 0.5

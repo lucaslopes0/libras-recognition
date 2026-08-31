@@ -16,11 +16,13 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 
+from libras.utils.mediapipe_holistic import TOTAL_DIM
+
 
 def build_bidirectional_lstm(
     num_classes: int,
     seq_len: int = 30,
-    features: int = 1662,
+    features: int = TOTAL_DIM,
     learning_rate: float = 1e-3,
 ) -> Sequential:
     """

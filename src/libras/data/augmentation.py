@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from libras.utils.mediapipe_holistic import FACE_DIM, HAND_DIM, POSE_DIM
+
 
 def add_gaussian_noise(seq: np.ndarray, std: float = 0.01) -> np.ndarray:
     """
@@ -49,11 +51,11 @@ def spatial_jitter(seq: np.ndarray, max_shift: float = 0.02) -> np.ndarray:
     shift_x = np.random.uniform(-max_shift, max_shift)
     shift_y = np.random.uniform(-max_shift, max_shift)
 
-    # Estrutura: pose (33×4: x,y,z,vis) + face (468×3) + mão esq/dir (21×3 cada)
+    # Estrutura: pose (x,y,z,vis) + face (x,y,z) + mão esq/dir (x,y,z cada).
     # Apenas x e y são deslocados; z e visibility ficam intactos.
-    pose_shift = np.tile([shift_x, shift_y, 0.0, 0.0], 33)
-    face_shift = np.tile([shift_x, shift_y, 0.0], 468)
-    hand_shift = np.tile([shift_x, shift_y, 0.0], 21)
+    pose_shift = np.tile([shift_x, shift_y, 0.0, 0.0], POSE_DIM // 4)
+    face_shift = np.tile([shift_x, shift_y, 0.0], FACE_DIM // 3)
+    hand_shift = np.tile([shift_x, shift_y, 0.0], HAND_DIM // 3)
     shift_vec = np.concatenate([pose_shift, face_shift, hand_shift, hand_shift])
 
     return (seq + shift_vec).astype(np.float32)

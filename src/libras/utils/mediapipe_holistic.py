@@ -2,7 +2,7 @@
 Wrapper sobre o MediaPipe Holistic.
 
 Centraliza:
-  • Extração de keypoints (1662 dimensões)
+  • Extração de keypoints (pose + subconjunto de face + mãos)
   • Normalização temporal de sequências
   • Desenho de landmarks
   • Parsing de nomes de arquivo do V-LIBRASIL
@@ -23,11 +23,25 @@ import numpy as np
 _mp_holistic = mp.solutions.holistic
 _mp_drawing = mp.solutions.drawing_utils
 
+# Holistic sempre calcula os 468 pontos da face mesh internamente (não tem
+# modo parcial) — mas para reconhecimento de palavras em Libras, a imensa
+# maioria desses pontos (contorno de rosto, nariz, olhos) não carrega
+# informação do sinal e só adiciona ruído ao vetor de entrada da LSTM.
+# Mantemos apenas os marcadores não-manuais que de fato podem importar
+# (lábios + sobrancelhas); o resto da face é descartado no momento da
+# extração, não da captura.
+_FACE_SUBSET_CONNECTIONS = (
+    mp.solutions.face_mesh.FACEMESH_LIPS
+    | mp.solutions.face_mesh.FACEMESH_LEFT_EYEBROW
+    | mp.solutions.face_mesh.FACEMESH_RIGHT_EYEBROW
+)
+FACE_SUBSET_INDICES: list[int] = sorted({i for pair in _FACE_SUBSET_CONNECTIONS for i in pair})
+
 # Dimensões esperadas
-POSE_DIM = 33 * 4       # x, y, z, visibility
-FACE_DIM = 468 * 3
+POSE_DIM = 33 * 4                      # x, y, z, visibility
+FACE_DIM = len(FACE_SUBSET_INDICES) * 3  # x, y, z — só lábios + sobrancelhas
 HAND_DIM = 21 * 3
-TOTAL_DIM = POSE_DIM + FACE_DIM + HAND_DIM + HAND_DIM  # 1662
+TOTAL_DIM = POSE_DIM + FACE_DIM + HAND_DIM + HAND_DIM
 
 
 # ── Detecção ────────────────────────────────────────────────
@@ -60,13 +74,13 @@ def create_holistic(
 
 def extract_keypoints(results: Any) -> np.ndarray:
     """
-    Extrai vetor de 1662 keypoints de um resultado do MediaPipe.
+    Extrai vetor de keypoints de um resultado do MediaPipe.
 
-    Composição:
-      pose        33 × 4  = 132
-      face       468 × 3  = 1404
-      left_hand   21 × 3  = 63
-      right_hand  21 × 3  = 63
+    Composição (TOTAL_DIM):
+      pose         33 × 4  = 132
+      face (subset) 60 × 3 = 180   — só lábios + sobrancelhas, ver FACE_SUBSET_INDICES
+      left_hand    21 × 3  = 63
+      right_hand   21 × 3  = 63
     """
     pose = (
         np.array([[r.x, r.y, r.z, r.visibility]
@@ -74,8 +88,10 @@ def extract_keypoints(results: Any) -> np.ndarray:
         if results.pose_landmarks else np.zeros(POSE_DIM)
     )
     face = (
-        np.array([[r.x, r.y, r.z]
-                  for r in results.face_landmarks.landmark]).flatten()
+        np.array([[results.face_landmarks.landmark[i].x,
+                   results.face_landmarks.landmark[i].y,
+                   results.face_landmarks.landmark[i].z]
+                  for i in FACE_SUBSET_INDICES]).flatten()
         if results.face_landmarks else np.zeros(FACE_DIM)
     )
     lh = (
@@ -91,7 +107,7 @@ def extract_keypoints(results: Any) -> np.ndarray:
     return np.concatenate([pose, face, lh, rh])
 
 
-# Índices das regiões no vetor de 1662 dimensões
+# Índices das regiões no vetor de TOTAL_DIM dimensões
 REGION_SLICES = {
     "pose":       (0,                              POSE_DIM),
     "face":       (POSE_DIM,                       POSE_DIM + FACE_DIM),
