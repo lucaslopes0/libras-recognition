@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from libras.utils.mediapipe_holistic import (
-    REGION_SLICES, TOTAL_DIM, normalize_sequence, parse_class_name,
+    REGION_SLICES, TOTAL_DIM, normalize_sequence, normalize_spatial, parse_class_name,
 )
 
 
@@ -35,6 +35,32 @@ class TestNormalizeSequence:
         result = normalize_sequence(frames, target=30)
         assert result.shape == (30, TOTAL_DIM)
         assert (result == 0).all()
+
+
+class TestNormalizeSpatial:
+    def test_centers_and_scales_shoulders(self):
+        vec = np.zeros(TOTAL_DIM)
+        vec[11 * 4: 11 * 4 + 2] = [0.3, 0.5]  # ombro esquerdo
+        vec[12 * 4: 12 * 4 + 2] = [0.7, 0.5]  # ombro direito
+        out = normalize_spatial(vec)
+
+        l = out[11 * 4: 11 * 4 + 2]
+        r = out[12 * 4: 12 * 4 + 2]
+        assert np.allclose((l + r) / 2, [0.0, 0.0], atol=1e-6)
+        assert np.isclose(np.hypot(*(r - l)), 1.0, atol=1e-6)
+
+    def test_visibility_column_untouched(self):
+        vec = np.zeros(TOTAL_DIM)
+        vec[11 * 4: 11 * 4 + 2] = [0.3, 0.5]
+        vec[12 * 4: 12 * 4 + 2] = [0.7, 0.5]
+        vec[0 * 4 + 3] = 0.9  # visibility do primeiro landmark de pose
+        out = normalize_spatial(vec)
+        assert out[0 * 4 + 3] == 0.9
+
+    def test_degenerate_shoulders_returns_unchanged(self):
+        vec = np.zeros(TOTAL_DIM)  # ombros coincidentes em (0,0) -> scale=0
+        out = normalize_spatial(vec)
+        assert np.array_equal(out, vec)
 
 
 class TestRegionSlices:

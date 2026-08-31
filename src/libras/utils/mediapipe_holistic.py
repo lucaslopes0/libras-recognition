@@ -104,7 +104,49 @@ def extract_keypoints(results: Any) -> np.ndarray:
                   for r in results.right_hand_landmarks.landmark]).flatten()
         if results.right_hand_landmarks else np.zeros(HAND_DIM)
     )
-    return np.concatenate([pose, face, lh, rh])
+    return normalize_spatial(np.concatenate([pose, face, lh, rh]))
+
+
+# ── Normalização espacial ────────────────────────────────────
+
+# Índices dos ombros na topologia padrão do MediaPipe Pose.
+_LEFT_SHOULDER_IDX = 11
+_RIGHT_SHOULDER_IDX = 12
+
+
+def normalize_spatial(vec: np.ndarray) -> np.ndarray:
+    """
+    Centraliza os keypoints no meio-ombro e escala pela largura dos ombros.
+
+    Sem isso, o mesmo sinal gera vetores bem diferentes só por o usuário
+    estar mais perto/longe da câmera ou fora do centro do quadro — variância
+    que o augmentation (spatial_jitter/scale_keypoints) tenta compensar
+    artificialmente, mas que é melhor eliminar na origem. Aplicado a x/y
+    (translação + escala) e z (só escala) de pose, face e mãos; a coluna de
+    visibility da pose não é espacial e fica intacta.
+    """
+    l = vec[_LEFT_SHOULDER_IDX * 4: _LEFT_SHOULDER_IDX * 4 + 2]
+    r = vec[_RIGHT_SHOULDER_IDX * 4: _RIGHT_SHOULDER_IDX * 4 + 2]
+    cx, cy = (l[0] + r[0]) / 2.0, (l[1] + r[1]) / 2.0
+    scale = float(np.hypot(r[0] - l[0], r[1] - l[1]))
+
+    if scale < 1e-6:
+        # Ombros não detectados (pose ausente) — vetor já é zeros, mantém.
+        return vec
+
+    out = vec.copy()
+    for start, dim, stride in (
+        (0, POSE_DIM, 4),
+        (POSE_DIM, FACE_DIM, 3),
+        (POSE_DIM + FACE_DIM, HAND_DIM, 3),
+        (POSE_DIM + FACE_DIM + HAND_DIM, HAND_DIM, 3),
+    ):
+        block = out[start: start + dim].reshape(-1, stride)
+        block[:, 0] = (block[:, 0] - cx) / scale
+        block[:, 1] = (block[:, 1] - cy) / scale
+        block[:, 2] = block[:, 2] / scale
+        out[start: start + dim] = block.flatten()
+    return out
 
 
 # Índices das regiões no vetor de TOTAL_DIM dimensões
