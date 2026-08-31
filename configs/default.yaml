@@ -1,6 +1,11 @@
 dataset:
   kaggle_id: "davimedio01/v-librasil"
-  max_classes: 50          
+  max_classes: 50
+  # Pasta de keypoints processados usada pelo treino/avaliacao. null usa o
+  # padrao (data/processed/, saida do 02_preprocess.py sobre o V-LIBRASIL).
+  # O vocabulario custom (scripts/06_record_dataset.py + 07_preprocess_custom.py)
+  # fica em data/processed_custom/.
+  processed_dir: "data/processed_custom"
 
 preprocess:
   num_frames: 30

@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from libras.config import PATHS, Config
+from libras.config import PATHS, PROJECT_ROOT, Config
 from libras.data.augmentation import augment_training_set
 from libras.data.loader import (
     _required_min_samples, list_classes, load_arrays, split_data,
@@ -57,6 +57,12 @@ def train(config: Config, model_name: str = "bi_lstm") -> None:
     cfg_train = config.training
     cfg_dataset = config.dataset
 
+    # Pasta de keypoints processados: configs/default.yaml -> dataset.processed_dir
+    # (custom, por padrão) ou PATHS["data_processed"] (saída do 02_preprocess.py
+    # sobre o V-LIBRASIL) quando não especificado.
+    processed_dir_cfg = cfg_dataset.get("processed_dir")
+    processed_dir = (PROJECT_ROOT / processed_dir_cfg) if processed_dir_cfg else None
+
     # Calcula min_samples necessário para o split estratificado
     min_samples = _required_min_samples(
         test_size=cfg_train["test_size"],
@@ -65,8 +71,9 @@ def train(config: Config, model_name: str = "bi_lstm") -> None:
 
     # 1. Carrega dados
     print("\n[1/5] Carregando dataset...")
+    print(f"      Pasta:                         {processed_dir or PATHS['data_processed']}")
     print(f"      Mínimo de amostras por classe: {min_samples}")
-    classes = list_classes(min_samples=min_samples)
+    classes = list_classes(processed_dir=processed_dir, min_samples=min_samples)
     print(f"      Classes encontradas: {len(classes)}")
 
     # ✅ CORREÇÃO: aplica o filtro max_classes do config
@@ -87,6 +94,7 @@ def train(config: Config, model_name: str = "bi_lstm") -> None:
 
     X, y = load_arrays(
         classes,
+        processed_dir=processed_dir,
         expected_shape=(cfg_pre["num_frames"], cfg_pre["keypoint_dim"]),
     )
     print(f"      X shape: {X.shape}")
