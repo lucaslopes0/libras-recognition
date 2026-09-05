@@ -14,7 +14,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from libras.utils.mediapipe_holistic import FACE_DIM, HAND_DIM, POSE_DIM
+# Landmarks de pose do MediaPipe (33, x/y/z/visibility) -- fixo pela topologia
+# do modelo Pose, não pela escolha de quais marcadores de face usamos.
+# Definido aqui (em vez de importado de libras.utils.mediapipe_holistic) para
+# que este módulo não precise do mediapipe instalado: augmentation só roda
+# sobre .npy já processados, nunca sobre vídeo/webcam, e treino (ex: no
+# Colab) não deveria depender de mediapipe/protobuf só por causa disso.
+POSE_DIM = 33 * 4
 
 
 def add_gaussian_noise(seq: np.ndarray, std: float = 0.01) -> np.ndarray:
@@ -51,12 +57,15 @@ def spatial_jitter(seq: np.ndarray, max_shift: float = 0.02) -> np.ndarray:
     shift_x = np.random.uniform(-max_shift, max_shift)
     shift_y = np.random.uniform(-max_shift, max_shift)
 
-    # Estrutura: pose (x,y,z,vis) + face (x,y,z) + mão esq/dir (x,y,z cada).
+    # Estrutura: pose (x,y,z,vis, stride 4) + resto -- face/mãos, todos
+    # (x,y,z, stride 3). Só POSE_DIM é fixo; o tamanho do resto vem do
+    # próprio shape de entrada, então isso não quebra se o subconjunto de
+    # face mudar (não precisa saber FACE_DIM/HAND_DIM aqui).
     # Apenas x e y são deslocados; z e visibility ficam intactos.
+    rest_dim = seq.shape[-1] - POSE_DIM
     pose_shift = np.tile([shift_x, shift_y, 0.0, 0.0], POSE_DIM // 4)
-    face_shift = np.tile([shift_x, shift_y, 0.0], FACE_DIM // 3)
-    hand_shift = np.tile([shift_x, shift_y, 0.0], HAND_DIM // 3)
-    shift_vec = np.concatenate([pose_shift, face_shift, hand_shift, hand_shift])
+    rest_shift = np.tile([shift_x, shift_y, 0.0], rest_dim // 3)
+    shift_vec = np.concatenate([pose_shift, rest_shift])
 
     return (seq + shift_vec).astype(np.float32)
 
